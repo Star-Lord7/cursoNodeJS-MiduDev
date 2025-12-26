@@ -1,4 +1,4 @@
-const z = require('zod') // Importa Zod para validación de esquemas
+import z from 'zod' // Importa Zod para validación de esquemas
 
 const movieSchema = z.object({
   title: z.string({
@@ -19,16 +19,11 @@ const movieSchema = z.object({
   )
 })
 
-function validateMovie (object) {
+export function validateMovie (object) {
   return movieSchema.safeParse(object)
 }
 
-function validatePartialMovie (input) {
+export function validatePartialMovie (input) {
   // Permite validar objetos parciales para actualizaciones opcionales usando "partial()"
   return movieSchema.partial().safeParse(input)
-}
-
-module.exports = {
-  validateMovie,
-  validatePartialMovie
 }
