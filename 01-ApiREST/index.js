@@ -1,4 +1,6 @@
 import { createApp } from './app.js'
-import { movieModel } from './models/mysql/movieModel.js'
+import { MovieModel } from './models/mysql/movieModel.js'
+
+const movieModel = new MovieModel()
 
 createApp({ movieModel })
