@@ -9,15 +9,16 @@ import 'dotenv/config'
 //   database: 'moviesdb'
 // }
 
-const config = {
+const pool = mysql.createPool({
   host: process.env.MYSQL_ADDON_HOST,
   user: process.env.MYSQL_ADDON_USER,
   port: process.env.MYSQL_ADDON_PORT,
   password: process.env.MYSQL_ADDON_PASSWORD,
-  database: process.env.MYSQL_ADDON_DB
-}
-
-const connection = await mysql.createConnection(config)
+  database: process.env.MYSQL_ADDON_DB,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+})
 
 export class MovieModel {
   async getAll ({ genre }) {
@@ -32,7 +33,7 @@ export class MovieModel {
     //   const [{ id }] = genres
     // }
 
-    const [movies] = await connection.query(`
+    const [movies] = await pool.query(`
         SELECT
             LOWER(CONCAT_WS('-',
                 SUBSTR(HEX(id), 1, 8),
@@ -48,7 +49,7 @@ export class MovieModel {
   }
 
   async getById ({ id }) {
-    const [movies] = await connection.query(`
+    const [movies] = await pool.query(`
         SELECT
             LOWER(CONCAT_WS('-',
                 SUBSTR(HEX(id), 1, 8),
@@ -75,15 +76,15 @@ export class MovieModel {
       poster
     } = input
 
-    const [uuidResult] = await connection.query('SELECT UUID() uuid;')
+    const [uuidResult] = await pool.query('SELECT UUID() uuid;')
     const [{ uuid }] = uuidResult
 
-    await connection.query(`
+    await pool.query(`
       INSERT INTO movie (id, title, year, director, duration, poster, rate)
       VALUES (UNHEX(REPLACE(?, '-', '')),?,?,?,?,?,?)
     `, [uuid, title, year, director, duration, poster, rate])
 
-    const [movies] = await connection.query(`
+    const [movies] = await pool.query(`
         SELECT
             LOWER(CONCAT_WS('-',
                 SUBSTR(HEX(id), 1, 8),
@@ -100,7 +101,7 @@ export class MovieModel {
   }
 
   async delete ({ id }) {
-    const [result] = await connection.query(`
+    const [result] = await pool.query(`
       DELETE FROM movie WHERE id = UNHEX(REPLACE(?, '-', ''));
     `, [id])
     if (result.affectedRows === 0) return false
@@ -116,12 +117,12 @@ export class MovieModel {
     }
     values.push(id)
 
-    const [result] = await connection.query(`
+    const [result] = await pool.query(`
       UPDATE movie SET ${fields.join(', ')} WHERE id = UNHEX(REPLACE(?, '-', ''));
     `, values)
     if (result.affectedRows === 0) return false
 
-    const [movies] = await connection.query(`
+    const [movies] = await pool.query(`
         SELECT
             LOWER(CONCAT_WS('-',
                 SUBSTR(HEX(id), 1, 8),
