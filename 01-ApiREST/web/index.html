@@ -18,7 +18,8 @@
     </style>
     </style>
     <script type="module">
-        fetch('http://localhost:1234/movies')
+        // fetch('http://localhost:1234/movies')
+        fetch('https://cursonodejs-midudev.onrender.com/movies')
             .then(response => response.json())
             .then(movies => {
                 const html = movies.map(movie => {
