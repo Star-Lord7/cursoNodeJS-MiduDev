@@ -6,7 +6,8 @@ export const corsMiddleware = () => cors({
     const ACCEPTED_ORIGINS = [
       'http://localhost:1234',
       'http://127.0.0.1:5500',
-      'http://localhost:5500'
+      'http://localhost:5500',
+      'https://api-rest-midudev.netlify.app'
     ]
     if (ACCEPTED_ORIGINS.includes(origin)) {
       return callback(null, true)
