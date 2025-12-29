@@ -20,7 +20,7 @@ const config = {
 const connection = await mysql.createConnection(config)
 
 export class MovieModel {
-  static async getAll ({ genre }) {
+  async getAll ({ genre }) {
     // if (genre) {
     //   const lowerCaseGenre = genre.toLowerCase()
 
@@ -47,7 +47,7 @@ export class MovieModel {
     return movies
   }
 
-  static async getById ({ id }) {
+  async getById ({ id }) {
     const [movies] = await connection.query(`
         SELECT
             LOWER(CONCAT_WS('-',
@@ -64,7 +64,7 @@ export class MovieModel {
     return movies[0]
   }
 
-  static async create ({ input }) {
+  async create ({ input }) {
     const {
       // genre: genreInput,
       title,
@@ -99,7 +99,7 @@ export class MovieModel {
     return movies[0]
   }
 
-  static async delete ({ id }) {
+  async delete ({ id }) {
     const [result] = await connection.query(`
       DELETE FROM movie WHERE id = UNHEX(REPLACE(?, '-', ''));
     `, [id])
@@ -107,7 +107,7 @@ export class MovieModel {
     return true
   }
 
-  static async update ({ id, input }) {
+  async update ({ id, input }) {
     const fields = []
     const values = []
     for (const [key, value] of Object.entries(input)) {
