@@ -1,20 +1,26 @@
 import { Router } from 'express'
 import { MovieController } from '../controllers/moviesController.js'
 
-const router = Router()
+// Creamos una función para crear el router de películas
+export const createMovieRouter = ({ movieModel }) => {
+  const router = Router()
 
-router.get('/', MovieController.getAll)
+  // Creamos una instancia del controlador de películas
+  const movieController = new MovieController({ movieModel })
 
-// Ruta para obtener una película por su ID
-router.get('/:id', MovieController.getById)
+  router.get('/', movieController.getAll)
 
-// Ruta para crear una nueva película
-router.post('/', MovieController.create)
+  // Ruta para obtener una película por su ID
+  router.get('/:id', movieController.getById)
 
-// Ruta para actualizar una película por su ID
-router.patch('/:id', MovieController.update)
+  // Ruta para crear una nueva película
+  router.post('/', movieController.create)
 
-// Ruta para eliminar una película por su ID
-router.delete('/:id', MovieController.delete)
+  // Ruta para actualizar una película por su ID
+  router.patch('/:id', movieController.update)
 
-export default router
+  // Ruta para eliminar una película por su ID
+  router.delete('/:id', movieController.delete)
+
+  return router
+}
